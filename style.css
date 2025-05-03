@@ -1,0 +1,117 @@
+body {
+    font: 16px Arial, sans-serif;
+    background-color: rgb(63, 63, 63);
+    text-align: center;
+    padding: 35px;
+}
+
+form, p, span {
+    margin: 0;
+    padding: 0;
+}
+
+input {
+    font: 12px;
+}
+
+a {
+    color: #0000FF;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#wrapper, #loginform {
+    margin: 0 auto;
+    background: #bcc0c0;
+    max-width: 504px;
+    border: 6px solid #ebebeb;
+    border-radius: 6px;
+}
+
+#chatbox {
+    text-align: left;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    padding: 10px;
+    background: #1d0909;
+    height: 300px;
+    max-width: 440px;
+    border: 1px  solid #ebebeb;
+    overflow:  auto;
+    border-radius:  5px;
+}
+
+.usermsg {
+    width: 60%;
+    padding: 10px;
+    border: none;
+    background: #fff;
+    border-radius: 5px;
+}
+
+.button {
+    text-align: center;
+    background-color: rgb(35, 140, 182);
+    color: white;
+    padding: 11px 10px;
+    border: none;
+    cursor: pointer;
+    width: 25%;
+    margin-bottom: 10px;
+    opacity: 0.8;
+    border-radius: 5px;
+}
+
+.senderName {
+    display: inline;
+    color: #050505;
+    background-color: brown;
+    padding: 5px 5px;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: rgb(18, 62, 79);
+    color: white;
+}
+
+.welcome {
+    float: center;
+    margin: 10px auto;
+    padding: 10px 0 10px 0;
+    font-size: 18px;
+    background-color: peru;
+    color: rgb(2, 2, 1);
+    max-width: 455px;
+    border-radius: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 10px;
+}
+
+li {
+    display: list-item;
+    text-align: -webkit-match-parent;
+    font-size: 10px;
+    background-color: gray;
+    border: 1px solid;
+    padding: 10px 0 20px 10px;
+    margin: 5px 0;
+    border-radius: 10px
+}
+
+.showmessage {
+    font-size: 16px;
+    padding: 10px 0 0 5px;
+}
+
+@media screen and (max-width: 320px) {
+    .welcome {
+        font-size: 14px;
+    }
+}

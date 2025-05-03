@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kenger Web Chat</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="wrapper">
+    <div id="menu">
+      <p class="welcome">Welcome,Kenken Chat App</p>
+      <div style="clear:both"></div>
+    </div>
+
+    <div id="chatbox">
+      <ul id="messages"></ul>
+    </div>
+
+    <form onsubmit="return sendMessage();">
+      <input type="text" id="message" class="usermsg" size="63" placeholder="Text Message" autocomplete="off" />
+      <input type="submit" class="button" value="Send" />
+    </form>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+    import { getDatabase, ref, push, onChildAdded, onChildRemoved, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAFK-k7Ow_XoPakM6NSGbFBNKo90OJcFi4",
+      authDomain: "kenken-chat.firebaseapp.com",
+      projectId: "kenken-chat",
+      storageBucket: "kenken-chat.appspot.com",
+      messagingSenderId: "1032591780585",
+      appId: "1:1032591780585:web:e544920abde155b48dde78",
+      measurementId: "G-JWDZB41LMX",
+      databaseURL: "https://kenken-chat-default-rtdb.firebaseio.com" 
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const database = getDatabase(app);
+
+    const myName = prompt("Enter your name:");
+
+    // Send message
+    window.sendMessage = function () {
+      const messageInput = document.getElementById("message");
+      const message = messageInput.value;
+
+      if (message.trim() !== "") {
+        push(ref(database, "messages"), {
+          sender: myName,
+          message: message
+        });
+        messageInput.value = "";
+      }
+
+      return false;
+    };
+
+    // Show new message
+    onChildAdded(ref(database, "messages"), (snapshot) => {
+      const msg = snapshot.val();
+      const li = document.createElement("li");
+      li.id = "message-" + snapshot.key;
+      li.innerHTML = `${msg.sender === myName ? `<button data-id="${snapshot.key}" onclick="deleteMessage(this)">Delete</button>` : ""}
+        <div class="senderName"> From :${msg.sender} </div> <br>   <p class="showmessage">${msg.message}</p>`;
+      document.getElementById("messages").appendChild(li);
+    });
+
+    // Delete message function
+    window.deleteMessage = function (button) {
+      const messageId = button.getAttribute("data-id");
+      remove(ref(database, "messages/" + messageId));
+    };
+
+    // Remove message from UI
+    onChildRemoved(ref(database, "messages"), (snapshot) => {
+      const messageElement = document.getElementById("message-" + snapshot.key);
+      if (messageElement) {
+        messageElement.innerHTML = "This message has been removed";
+      }
+    });
+  </script>
+</body>
+</html>
