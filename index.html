@@ -67,7 +67,7 @@
         <p>Enter a new group ID.</p>
         <br>
         <label for="group-id">Group ID:</label>
-        <input type="text" id="group-id" placeholder="Group ID" />
+        <input type="text" id="create-group-id" placeholder="Group ID" />
         <br>
         <div class="group-buttons">
           <button class="submit-btn" onclick="createGroup()">Create Group</button>
@@ -172,7 +172,7 @@ window.login = async function () {
 
 // Create Group
 window.createGroup = async function () {
-  const groupId = document.getElementById("group-id").value.trim();
+  const groupId = document.getElementById("create-group-id").value.trim();
   if (!groupId) return alert("Enter a group ID");
 
   const groupRef = ref(db, "groups/" + groupId);
@@ -215,6 +215,17 @@ window.joinGroup = async function () {
 document.querySelector(".backbtn").onclick = function () {
   document.getElementById("group-section").style.display = "block";
   document.getElementById("chat-section").style.display = "none";
+  document.getElementById("group-section-create").style.display = "none";
+  document.getElementById("container").style.width = "480px";
+  document.getElementById("container").style.height = "80vh";
+  document.getElementById("container").style.maxWidth = "480px";
+  document.getElementById("container").style.padding = "20px";
+  document.getElementById("container").style.margin = "auto";
+  document.getElementById("container").style.background = "white";
+  document.getElementById("container").style.borderRadius = "10px";
+  document.getElementById("messages").innerHTML = "";
+  currentGroup = null;
+  document.getElementById("group-id").value = "";
 };
 
 // Open Chat UI
