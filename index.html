@@ -25,8 +25,7 @@
         <br>
         <button class="submit-btn" onclick="login()">Login</button>
         <div class="form-footer">
-          <p>Forgot your password? <a href="#">Reset Password</a></p>
-          <p>Don't have an account? <a href="#" onclick="showForm('signup')">Sign Up</a></p>
+          <a href="#" onclick="showForm('signup')">Don't have an account?</a>
         </div>
       </div>
 
@@ -48,27 +47,41 @@
         <br>
         <button class="submit-btn" onclick="signup()">Sign Up</button>
         <p>Already have an account? <a href="#" onclick="showForm('login')">Login</a></p>
-      </div>
-
+      </div> 
       <div id="group-section" class="form-section" style="display:none;">
-        <h3>Group Chat</h3>
-        <p>Enter a group ID to join or create a new group.</p>
+        <h3>Join Group Chat</h3>
+        <p>Enter a group ID to join</p>
         <br>
         <label for="group-id">Group ID:</label>
         <input type="text" id="group-id" placeholder="Group ID" />
         <br>
         <div class="group-buttons">
           <button class="submit-btn" onclick="joinGroup()">Join Group</button>
-          <button class="submit-btn" onclick="createGroup()">Create Group</button>
+          <p>or</p>
+          <button class="submit-btn" onclick="createGroupbtn()">Create Group</button>
         </div>
       </div>
 
-      <div id="chat-section" class="form-section" style="display:none;">
-        <div class="chat-header">
-            <h4 id="chat-group-name"></h4>
-            <button class="backbtn">Back</button>
+      <div id="group-section-create" class="form-section" style="display:none;">
+        <h3>Create Group Chat</h3>
+        <p>Enter a new group ID.</p>
+        <br>
+        <label for="group-id">Group ID:</label>
+        <input type="text" id="group-id" placeholder="Group ID" />
+        <br>
+        <div class="group-buttons">
+          <button class="submit-btn" onclick="createGroup()">Create Group</button>
+          <p>or</p>
+          <button class="submit-btn" onclick="joinGroupbtn()">Join Group</button>
         </div>
-      <div id="chatbox">
+      </div>
+
+      <div id="chat-section" class="chat-section" style="display:none;">
+        <div class="chat-header">
+          <button class="backbtn">Back</button>
+            <h4 id="chat-group-name"></h4>
+        </div>
+        <div id="chatbox">
         <ul id="messages"></ul>
       </div>
       <div class="message-input">
@@ -78,8 +91,8 @@
     </div>
   </div>
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+ // Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
 import {
   getDatabase,
   ref,
@@ -90,22 +103,23 @@ import {
   onChildAdded,
   remove,
   onChildRemoved
-} from "https://www.gstatic.com/firebasejs/11.7.1/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/11.7.3/firebase-database.js";
 
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyBB51HT0esLWJTkVKCfvs-aYWedFJmcnes",
-  authDomain: "private-c6dbe.firebaseapp.com",
-  databaseURL: "https://private-c6dbe-default-rtdb.firebaseio.com",
-  projectId: "private-c6dbe",
-  storageBucket: "private-c6dbe.appspot.com",
-  messagingSenderId: "449780631555",
-  appId: "1:449780631555:web:93a3a323564b3373976636"
+
+ const firebaseConfig = {
+ apiKey: "AIzaSyADbCzd4Zps5q6SiuhbeVyszXZjmx7VqjU",
+ authDomain: "group-chat-53a69.firebaseapp.com",
+ projectId: "group-chat-53a69",
+ storageBucket: "group-chat-53a69.firebasestorage.app",
+ messagingSenderId: "740965464734",
+ appId: "1:740965464734:web:5817dee3088f308235198f",
+ measurementId: "G-XR7X9SYFPQ"
 };
 
-// Init Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+window.db = db;
 
 let currentUser = null;
 let currentGroup = null;
@@ -122,6 +136,9 @@ window.signup = async function () {
   const username = document.getElementById("signup-username").value.trim();
   const password = document.getElementById("signup-password").value.trim();
   if (!username || !password) return alert("Please fill all fields");
+
+  const passwordConfirm = document.getElementById("signup-password-confirm").value.trim();
+  if (password !== passwordConfirm) return alert("Passwords do not match");
 
   const userRef = ref(db, "users/" + username);
   const snapshot = await get(userRef);
@@ -149,7 +166,7 @@ window.login = async function () {
   document.getElementById("login-form").style.display = "none";
   document.getElementById("signup-form").style.display = "none";
   document.getElementById("group-section").style.display = "block";
-  document.getElementById("container").style.background = "gray";
+  document.getElementById("container").style.background = "white";
   alert("Welcome " + currentUser + "!");
 };
 
@@ -166,6 +183,18 @@ window.createGroup = async function () {
   await set(groupRef, { createdBy: currentUser });
   currentGroup = groupId;
   openChat();
+};
+
+// Create Group Button
+window.createGroupbtn = function () {
+  document.getElementById("group-section").style.display = "none";
+  document.getElementById("group-section-create").style.display = "block";
+};
+
+// Join Group Button
+window.joinGroupbtn = function () {
+  document.getElementById("group-section").style.display = "block";
+  document.getElementById("group-section-create").style.display = "none";
 };
 
 // Join Group
@@ -191,44 +220,79 @@ document.querySelector(".backbtn").onclick = function () {
 // Open Chat UI
 function openChat() {
   document.getElementById("group-section").style.display = "none";
-  document.getElementById("chat-section").style.display = "block";
-  document.getElementById("chat-group-name").textContent = "Group: " + currentGroup;
-
+  document.getElementById("group-section-create").style.display = "none";
+  document.getElementById("chat-section").style.display = "flex";
+  document.getElementById("chat-group-name").textContent = "Group ID:  "+ currentGroup;
+  document.getElementById("container").style.width = "100%";
+  document.getElementById("container").style.height = "100%";
+  document.getElementById("container").style.maxWidth = "100vw";
+  document.getElementById("container").style.padding = "0";
+  document.getElementById("container").style.margin = "0";
+  document.getElementById("container").style.background = "black";
+  document.getElementById("container").style.borderRadius = "0";
   const messagesRef = ref(db, "groups/" + currentGroup + "/messages");
   const messagesUl = document.getElementById("messages");
   messagesUl.innerHTML = "";
 
-  onChildAdded(messagesRef, (snapshot) => {
-    const msg = snapshot.val();
-    const li = document.createElement("li");
-    li.id = "message-" + snapshot.key;
+onChildAdded(messagesRef, (snapshot) => {
+  const msg = snapshot.val();
+  const li = document.createElement("li");
+  li.id = "message-" + snapshot.key;
 
-    const isMine = msg.sender === myName;
+  const isMine = msg.sender === myName;
+
+  // Format time (e.g. HH:MM AM/PM)
+  let formattedTime = "";
+  if (msg.time) {
+    const date = new Date(msg.time);
+    formattedTime = date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  if (isMine) {
     li.innerHTML = `
-      ${isMine ? `
-      <div class="Msginfo">
-      <div class="senderName"> From :${msg.sender}</div>
-      <button class="Msgdelete" data-id="${snapshot.key}" onclick="deleteMessage(this)" style="display:none;">Delete</button>` : ""}
-      <button onclick="deleteBtn(this)" class="deleteBtn">More</button>
+      <div class="MsGcontainer">
+        <div class="Msginfo">
+          <div class="senderName">From: ${msg.sender}</div>
+          <button class="Msgdelete" data-id="${snapshot.key}" onclick="deleteMessage(this)" style="display:none;">Delete</button>
+          <button onclick="deleteBtn(this)" class="deleteBtn">More</button>
+        </div>
+        <p class="showmessage">${msg.message}</p>
+        <div class="msg-time">${formattedTime}</div>
       </div>
-      <p class="showmessage">${msg.message}</p>
     `;
-    messagesUl.appendChild(li);
-    messagesUl.scrollTop = messagesUl.scrollHeight;
-  });
+  } else {
+    li.innerHTML = `
+      <div class="MsGcontainer">
+        <div class="Msginfo">
+          <div class="senderName">From: ${msg.sender}</div>
+        </div>
+        <p class="showmessage">${msg.message}</p>
+        <div class="msg-time">${formattedTime}</div>
+      </div>
+    `;
+  }
+
+  messagesUl.appendChild(li);
+  messagesUl.scrollTop = messagesUl.scrollHeight;
+});
 
 window.deleteBtn = function (button) {
   const parent = button.closest(".Msginfo");
   if (!parent) return;
 
-  const showDeleteBtn = parent.querySelector(".Msgdelete");
-  const hideDeleteBtn = parent.querySelector(".deleteBtn");
+  const deleteBtn = parent.querySelector(".deleteBtn");
+  const deleteMessageBtn = parent.querySelector(".Msgdelete");
 
-  if (showDeleteBtn && hideDeleteBtn) {
-    showDeleteBtn.style.display = "block";
-    hideDeleteBtn.style.display = "none";
+  if (deleteBtn && deleteMessageBtn) {
+    deleteBtn.style.display = "none";
+    deleteMessageBtn.style.display = "inline-block";
   }
 };
+
+
 
   // Message Removed UI
   onChildRemoved(messagesRef, (snapshot) => {
@@ -237,14 +301,20 @@ window.deleteBtn = function (button) {
   });
 }
 
-// Send Message
 window.sendMessage = function () {
   const input = document.getElementById("message-input");
   const text = input.value.trim();
   if (!text) return false;
 
   const messagesRef = ref(db, "groups/" + currentGroup + "/messages");
-  push(messagesRef, { sender: myName, message: text });
+  const timestamp = new Date().toISOString(); // Save in a standard format
+
+  push(messagesRef, {
+    sender: myName,
+    message: text,
+    time: timestamp
+  });
+
   input.value = "";
   return false;
 };
